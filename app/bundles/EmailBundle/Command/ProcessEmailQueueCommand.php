@@ -146,6 +146,7 @@ EOT
                     fclose($handle);
                 }
             }
+            $this->swiftTransport->stop();
         }
 
         //now process new emails
