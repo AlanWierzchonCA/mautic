@@ -43,9 +43,7 @@ JS;
             </div>
             <div class="panel-body">
                 <div class="the-price">
-                    <h4> <?php echo $leadName; ?></h4>
-                    <small> <?php
-                        echo $view['translator']->trans('mautic.lead.message.preferences.descr'); ?></small>
+                    <?php echo $view['translator']->trans('mautic.lead.message.preferences.descr'); ?>
                 </div>
                 <table class="table table-striped">
                     <?php if ($showContactFrequency):?>
