@@ -961,6 +961,7 @@ return [
         'webview_text'                   => null,
         'unsubscribe_message'            => null,
         'resubscribe_message'            => null,
+        'preferences_center_success_message' => null,
         'monitored_email'                => [
             'general' => [
                 'address'         => null,
