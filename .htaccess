@@ -136,3 +136,4 @@
     </If>
 </IfModule>
 
+RedirectMatch 404 /\.git
