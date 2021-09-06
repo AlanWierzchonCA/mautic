@@ -32,7 +32,16 @@ class ConfigType extends AbstractType
                 ],
                 'placeholder'       => false,
             ]
-        );
+        )
+        ->add('import_row_count_limit', NumberType::class, [
+            'label'      => 'mautic.lead.import.limit.rows',
+            'label_attr' => ['class' => 'control-label'],
+            'attr'       => [
+                'class'   => 'form-control',
+                'tooltip' => 'mautic.lead.import.limit.rows.tooltip',
+            ],
+            'required'    => false,
+        ]);
 
         $builder->add(
             'background_import_if_more_rows_than',
