@@ -363,6 +363,10 @@ class ImportController extends FormController
                                     $file->seek(PHP_INT_MAX);
                                     $linecount = $file->key();
 
+                                    if (!empty($this->getRowCountLimit()) && $linecount > $this->getRowCountLimit()) {
+                                        throw new FileException('upload_max_file_row');
+                                    }
+
                                     if (!empty($headers) && is_array($headers)) {
                                         $headers = CsvHelper::sanitizeHeaders($headers);
 
@@ -376,7 +380,12 @@ class ImportController extends FormController
                                     }
                                 }
                             } catch (FileException $e) {
-                                if (str_contains($e->getMessage(), 'upload_max_filesize')) {
+                                if (str_contains($e->getMessage(), 'upload_max_file_row')) {
+                                    $errorMessage    = 'mautic.lead.import.filetoorow';
+                                    $errorParameters = [
+                                        '%import_row_count_limit%' => $this->getRowCountLimit(),
+                                    ];
+                                } elseif (str_contains($e->getMessage(), 'upload_max_filesize')) {
                                     $errorMessage    = 'mautic.lead.import.filetoolarge';
                                     $errorParameters = [
                                         '%upload_max_filesize%' => ini_get('upload_max_filesize'),
@@ -544,6 +553,11 @@ class ImportController extends FormController
     protected function getLineCountLimit()
     {
         return $this->coreParametersHelper->get('background_import_if_more_rows_than', 0);
+    }
+
+    protected function getRowCountLimit(): int
+    {
+        return (int) $this->coreParametersHelper->get('import_row_count_limit', 0);
     }
 
     /**

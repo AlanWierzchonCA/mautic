@@ -1039,6 +1039,7 @@ return [
     'parameters' => [
         'parallel_import_limit'               => 1,
         'background_import_if_more_rows_than' => 0,
+        'import_row_count_limit'              => null,
         'contact_columns'                     => [
             '0' => 'name',
             '1' => 'email',
