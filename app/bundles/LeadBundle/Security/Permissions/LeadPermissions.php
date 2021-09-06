@@ -23,6 +23,11 @@ class LeadPermissions extends AbstractPermissions
                 'full' => 1024,
                 'view' => 1,
             ],
+            'exports' => [
+                'full'         => 1024,
+                'create'       => 32,
+                'notanonymize' => 2,
+            ],
         ];
         $this->addExtendedPermissions('leads', false);
         $this->addStandardPermissions('imports');
@@ -71,6 +76,23 @@ class LeadPermissions extends AbstractPermissions
                 'level'             => 'fields',
             ]
         );
+
+        $builder->add(
+            'lead:exports',
+            PermissionListType::class,
+            [
+                'choices' => [
+                    'mautic.core.permissions.full'         => 'full',
+                    'mautic.core.permissions.notanonymize' => 'notanonymize',
+                    'mautic.core.permissions.create'       => 'create',
+                ],
+                'label'             => 'mautic.lead.permissions.exports',
+                'data'              => (!empty($data['exports']) ? $data['exports'] : []),
+                'bundle'            => 'lead',
+                'level'             => 'exports',
+            ]
+        );
+
 
         $this->addStandardFormFields($this->getName(), 'imports', $builder, $data);
     }
