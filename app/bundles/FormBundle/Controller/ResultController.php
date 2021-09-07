@@ -266,11 +266,22 @@ class ResultController extends CommonFormController
         } elseif (!$this->get('mautic.security')->hasEntityAccess(
             'form:forms:viewown',
             'form:forms:viewother',
+            'lead:exports:notanonymize',
+            'lead:exports:create',
             $form->getCreatedBy()
         )
         ) {
             return $this->accessDenied();
         }
+
+        $permissions = $this->get('mautic.security')->isGranted(
+            [
+                'lead:exports:notanonymize',
+            ],
+            'RETURN_ARRAY'
+        );
+
+        $notAnonymize = (bool)$permissions['lead:exports:notanonymize'];
 
         $orderBy    = $session->get('mautic.formresult.'.$objectId.'.orderby', 's.date_submitted');
         $orderByDir = $session->get('mautic.formresult.'.$objectId.'.orderbydir', 'DESC');
@@ -287,7 +298,7 @@ class ResultController extends CommonFormController
         /** @var \Mautic\FormBundle\Model\SubmissionModel $model */
         $model = $this->getModel('form.submission');
 
-        return $model->exportResults($format, $form, $args);
+        return $model->exportResults($format, $form, $args, $notAnonymize);
     }
 
     /**

@@ -7,6 +7,7 @@ use Mautic\CampaignBundle\Entity\Campaign;
 use Mautic\CampaignBundle\Membership\MembershipManager;
 use Mautic\CampaignBundle\Model\CampaignModel;
 use Mautic\CoreBundle\Exception\FileUploadException;
+use Mautic\CoreBundle\Helper\AbstractFormFieldHelper;
 use Mautic\CoreBundle\Helper\Chart\ChartQuery;
 use Mautic\CoreBundle\Helper\Chart\LineChart;
 use Mautic\CoreBundle\Helper\DateTimeHelper;
@@ -505,7 +506,7 @@ class SubmissionModel extends CommonFormModel
      *
      * @throws \Exception
      */
-    public function exportResults($format, $form, $queryArgs)
+    public function exportResults($format, $form, $queryArgs, $notAnonymize = false)
     {
         $viewOnlyFields              = $this->formModel->getCustomComponents()['viewOnlyFields'];
         $queryArgs['viewOnlyFields'] = $viewOnlyFields;
@@ -519,7 +520,7 @@ class SubmissionModel extends CommonFormModel
         switch ($format) {
             case 'csv':
                 $response = new StreamedResponse(
-                    function () use ($results, $form, $translator, $viewOnlyFields) {
+                    function () use ($results, $form, $translator, $viewOnlyFields, $notAnonymize) {
                         $handle = fopen('php://output', 'r+');
 
                         //build the header row
@@ -544,17 +545,29 @@ class SubmissionModel extends CommonFormModel
 
                         //build the data rows
                         foreach ($results as $k => $s) {
+                            $anonimEmail = null;
+                            $email = $s['email'] ?? null;
+                            if ($email) {
+                                $pos = strpos($email, '@');
+                                $anonimEmail = '*'.substr($email, $pos);
+                            }
                             $row = [
                                 $s['id'],
                                 $this->dateHelper->toFull($s['dateSubmitted'], 'UTC'),
-                                $s['ipAddress'],
+                                !$notAnonymize ? '*' : $s['ipAddress'],
                                 $s['referer'],
                             ];
+
                             foreach ($s['results'] as $k2 => $r) {
                                 if (in_array($r['type'], $viewOnlyFields)) {
                                     continue;
                                 }
-                                $row[] = htmlspecialchars_decode($r['value'], ENT_QUOTES);
+                                if (false == $notAnonymize) {
+                                    $row[] = AbstractFormFieldHelper::anonimizationFields($k2, $r['value'], $email, $anonimEmail);
+                                } else {
+                                    $row[] = htmlspecialchars_decode($r['value'], ENT_QUOTES);
+                                }
+
                                 //free memory
                                 unset($s['results'][$k2]);
                             }
@@ -578,6 +591,21 @@ class SubmissionModel extends CommonFormModel
 
                 return $response;
             case 'html':
+                if (false == $notAnonymize) {
+                    foreach ($results as $k => $s) {
+                        $anonimEmail = null;
+                        $email       = $s['email'] ?? null;
+                        if ($email) {
+                            $pos         = strpos($email, '@');
+                            $anonimEmail = '*'.substr($email, $pos);
+                        }
+                        $results[$k]['ipAddress'] = '*';
+                        foreach ($s['results'] as $k2 => $r) {
+                            $results[$k]['results'][$k2]['value'] = AbstractFormFieldHelper::anonimizationFields($k2, $r['value'], $email, $anonimEmail);
+                        }
+                    }
+                }
+
                 $content = $this->templatingHelper->getTemplating()->renderResponse(
                     'MauticFormBundle:Result:export.html.php',
                     [
@@ -592,7 +620,7 @@ class SubmissionModel extends CommonFormModel
             case 'xlsx':
                 if (class_exists(Spreadsheet::class)) {
                     $response = new StreamedResponse(
-                        function () use ($results, $form, $translator, $name, $viewOnlyFields) {
+                        function () use ($results, $form, $translator, $name, $viewOnlyFields, $notAnonymize) {
                             $objPHPExcel = new Spreadsheet();
                             $objPHPExcel->getProperties()->setTitle($name);
 
@@ -621,17 +649,29 @@ class SubmissionModel extends CommonFormModel
                             //build the data rows
                             $count = 2;
                             foreach ($results as $k => $s) {
+                                $anonimEmail = null;
+                                $email = $s['email'] ?? null;
+                                if ($email) {
+                                    $pos = strpos($email, '@');
+                                    $anonimEmail = '*'.substr($email, $pos);
+                                }
                                 $row = [
                                     $s['id'],
                                     $this->dateHelper->toFull($s['dateSubmitted'], 'UTC'),
-                                    $s['ipAddress'],
+                                    !$notAnonymize ? '*' : $s['ipAddress'],
                                     $s['referer'],
                                 ];
+
                                 foreach ($s['results'] as $k2 => $r) {
                                     if (in_array($r['type'], $viewOnlyFields)) {
                                         continue;
                                     }
-                                    $row[] = htmlspecialchars_decode($r['value'], ENT_QUOTES);
+                                    if (false == $notAnonymize) {
+                                        $row[] = AbstractFormFieldHelper::anonimizationFields($k2, $r['value'], $email, $anonimEmail);
+                                    } else {
+                                        $row[] = htmlspecialchars_decode($r['value'], ENT_QUOTES);
+                                    }
+
                                     //free memory
                                     unset($s['results'][$k2]);
                                 }
