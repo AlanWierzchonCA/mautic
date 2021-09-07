@@ -258,6 +258,26 @@ trait CustomFieldEntityTrait
         }
     }
 
+
+    /**
+     * Get anonimization profile values.
+     *
+     * @return array
+     */
+    public function getAnonimizationProfileFields()
+    {
+        if (isset($this->fields['core'])) {
+            $fieldValues = [
+                'id' => $this->id,
+            ];
+            $fieldValues += CustomFieldValueHelper::anonimizationFields($this->fields);
+
+            return array_merge($fieldValues, $this->updatedFields);
+        } else {
+            return $this->fields;
+        }
+    }
+
     /**
      * @return bool
      */
