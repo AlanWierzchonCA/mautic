@@ -1,0 +1,192 @@
+image: ubuntu:20.04
+
+stages:
+  - test ci
+  - install
+  - test
+  - deploy webtest
+  - deploy prod
+
+before_script:
+  - apt-get update
+  - export LANG=C.UTF-8
+  - apt-get install -y software-properties-common apt-transport-https ca-certificates curl openssl
+  - apt-get update
+  - add-apt-repository ppa:ondrej/php
+  - apt-get update
+  - apt-get install -y git php8.0
+  - apt-get install -y php-pear
+  - apt-get install -y php8.0-curl php8.0-dev php8.0-gd php8.0-mbstring php8.0-zip php8.0-mysql php8.0-xml php8.0-bcmath php8.0-imap
+  - add-apt-repository universe
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php', stream_context_create(['http' => ['proxy' => '$tcp_proxy']]));"
+  - php -r "if (hash_file('sha384', 'composer-setup.php') === '$COMPOSER_HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); echo hash_file('sha384', 'composer-setup.php'); } echo PHP_EOL;"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+
+install&build:
+  stage: install
+  environment:
+    name: installation
+  services:
+    - name: mariadb:10.5
+      alias: marketing-db.krakow.comarch
+  variables:
+    MYSQL_DATABASE: mautic
+    MYSQL_ROOT_PASSWORD: mautic
+    MYSQL_USER: mautic
+    MYSQL_PASSWORD: $PROD_REMOTE_DB_PASS
+
+  artifacts:
+    expire_in: 5 weeks
+    paths:
+      - vendor/
+      - bin/
+      - var/cache/prod/
+      - app/config/local.php
+      - media/css
+      - media/js
+  script:
+    - echo "Install sspass ..."
+    - apt-get update -y
+    - apt-get install -y sshpass
+    - mkdir ~/.ssh
+    - echo "StrictHostKeyChecking no" >> ~/.ssh/config
+    - export SSHPASS=$PROD_REMOTE_USER_PASS
+
+    - echo "Download Plugins ..."
+    - sshpass -e scp -r $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR"plugins/*" ./plugins
+
+    - echo "Download Translations ..."
+    - sshpass -e scp -r $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR"translations/*" ./translations
+
+    - echo "Download Themes ..."
+    - sshpass -e scp -r $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR"themes/*" ./themes
+
+    - echo "Download Local.php if exist or copy from Gitlab Varialbes when not exists ..."
+    - sshpass -e ssh -q $PROD_REMOTE_USER@$PROD_REMOTE_HOST [[ -f $PROD_REMOTE_HOST_DIR"app/config/local.php" ]] && sshpass -e scp $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR"app/config/local.php" ./app/config/local.php | echo "File local.php exists and it has been downloaded frome remote serwer ..." || cp $CONFIG_LOCAL_PHP app/config/local.php | echo "File local.php does not exist and it has been copied from Gitlab Variables ..."
+
+    - chmod 660 app/config/local.php
+
+    - echo "Start installation ..."
+    - php composer.phar install
+    - echo "Creatinng dir:" $PROD_REMOTE_HOST_DIR " ..."
+    - mkdir -p $PROD_REMOTE_HOST_DIR
+    - echo "Copy project to "$PROD_REMOTE_HOST_DIR " ..."
+    - cp -R * $PROD_REMOTE_HOST_DIR
+    - echo "Warming cache in "$PROD_REMOTE_HOST_DIR"var/cache ..."
+    - php $PROD_REMOTE_HOST_DIR"bin/console" cache:clear
+    - cp -R $PROD_REMOTE_HOST_DIR"var/cache" var/cache
+    - echo "Generate assets ..."
+    - rm -rf media/js
+    - rm -rf media/css
+    - rm -rf $PROD_REMOTE_HOST_DIR"media/js"
+    - rm -rf $PROD_REMOTE_HOST_DIR"media/css"
+    - php bin/console mautic:assets:generate
+    - cp -R $PROD_REMOTE_HOST_DIR"media/js" media/js
+    - cp -R $PROD_REMOTE_HOST_DIR"media/css" media/css
+
+
+unit-test:
+  stage: test
+  when: manual
+  environment:
+    name: test
+  services:
+    - mysql
+  variables:
+    MYSQL_DATABASE: mautictest
+    MYSQL_ROOT_PASSWORD: test
+  dependencies:
+    - install&build
+  script:
+    - rm app/config/local.php
+    - apt-get update
+    - apt-get install -y mysql-client
+    - echo "Running unit tests... This will take about 30 minutes. ..."
+    - cp $ENV_TEST .env
+    - rm app/phpunit.xml.dist
+    - cp $PHPUNIT_XML app/phpunit.xml.dist
+    - php composer.phar test
+
+phpstan-test:
+  stage: test
+  when: manual
+  environment:
+    name: test
+  dependencies:
+    - install&build
+  script:
+    - rm app/config/local.php
+    - echo "Running PHPSTAN test ..."
+    - php composer.phar phpstan
+
+csfixer-test:
+  stage: test
+  when: manual
+  environment:
+    name: test
+  dependencies:
+    - install&build
+  script:
+    - rm app/config/local.php
+    - echo "Running Csfixer test ..."
+    - php composer.phar cs
+    # - php composer.phar fixcs
+
+deploy_to_webtest_server:
+  image: alpine:latest
+  stage: deploy webtest
+  rules:
+    - if: $GITLAB_USER_LOGIN =~ $ACCESS_USER_TO_DEPLOY && $CI_COMMIT_BRANCH =~ /^.*-ca\..*$/
+      when: manual
+    - when: never
+  environment:
+    name: preproduction
+  before_script:
+    - apk update && apk add openssh-client rsync sshpass
+    - mkdir ~/.ssh
+    - echo "StrictHostKeyChecking no" >> ~/.ssh/config
+    - export SSHPASS=$PREPROD_REMOTE_USER_PASS
+  dependencies:
+    - install&build
+  script:
+    - echo "Try Rsync deploy to remote server ..."
+    - echo $PREPROD_REMOTE_USER@$PREPROD_REMOTE_HOST:$PREPROD_REMOTE_HOST_DIR " ..."
+    - sshpass -e rsync -avh -r --stats --delete --omit-dir-times --no-perms --files-from=$RSYNC_FILES --exclude-from=$RSYNC_FILES_EXCLUDE -e ssh . $PREPROD_REMOTE_USER@$PREPROD_REMOTE_HOST:$PREPROD_REMOTE_HOST_DIR
+
+    - echo "Rsyn static files without --delete option ..."
+    - sshpass -e rsync -avh -r --stats --omit-dir-times --no-perms --files-from=$RSYNC_FILES_ASSETS -e ssh . $PREPROD_REMOTE_USER@$PREPROD_REMOTE_HOST:$PREPROD_REMOTE_HOST_DIR
+
+    - echo "Rsync Local.php if not exists ..."
+    - sshpass -e ssh -q $PREPROD_REMOTE_USER@$PREPROD_REMOTE_HOST [[ -f $PREPROD_REMOTE_HOST_DIR"app/config/local.php" ]] && echo "File local.php exists" || echo "File local.php does not exist" | sshpass -e rsync -avhz -v --progress app/config/local.php $PREPROD_REMOTE_USER@$PROD_REMOTE_HOST:$PREPROD_REMOTE_HOST_DIR"app/config/"
+
+deploy_to_prod_server:
+  image: alpine:latest
+  stage: deploy prod
+  environment:
+    name: production
+  rules:
+    - if: $GITLAB_USER_LOGIN =~ $ACCESS_USER_TO_DEPLOY && $CI_COMMIT_BRANCH =~ /^.*-ca\..*$/
+      when: manual
+    - when: never
+
+  before_script:
+    - apk update && apk add openssh-client rsync sshpass
+    - mkdir ~/.ssh
+    - echo "StrictHostKeyChecking no" >> ~/.ssh/config
+    - export SSHPASS=$PROD_REMOTE_USER_PASS
+  dependencies:
+    - install&build
+  script:
+    - echo "Try Rsync deploy to remote server ..."
+    - echo $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR " ..."
+    - sshpass -e rsync -avh -r --stats --delete --omit-dir-times --no-perms --files-from=$RSYNC_FILES --exclude-from=$RSYNC_FILES_EXCLUDE -e ssh . $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR
+
+    - echo "Rsyn static files without --delete option ..."
+    - sshpass -e rsync -avh -r --stats --omit-dir-times --no-perms --files-from=$RSYNC_FILES_ASSETS -e ssh . $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR
+
+    - echo "Rsync Local.php if not exists ..."
+    - sshpass -e ssh -q $PROD_REMOTE_USER@$PROD_REMOTE_HOST [[ -f $PROD_REMOTE_HOST_DIR"app/config/local.php" ]] && echo "File local.php exists" || echo "File local.php does not exist" | sshpass -e rsync -avhz -v --progress app/config/local.php $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR"app/config/"
+
+
+
