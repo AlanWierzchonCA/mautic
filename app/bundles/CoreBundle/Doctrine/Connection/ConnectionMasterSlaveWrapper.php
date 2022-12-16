@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Mautic\CoreBundle\Doctrine\Connection;
 
-use Doctrine\DBAL\Connections\MasterSlaveConnection;
-use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection;
 
-class ConnectionMasterSlaveWrapper extends MasterSlaveConnection
+class ConnectionMasterSlaveWrapper extends PrimaryReadReplicaConnection
 {
     /**
      * @param array<string, string> $dbParams
      *
-     * @throws Exception
      */
     public function initConnection(array $dbParams): void
     {
