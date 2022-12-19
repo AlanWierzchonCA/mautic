@@ -3762,35 +3762,33 @@
         },
         {
             "name": "helios-ag/fm-elfinder-bundle",
-            "version": "10.1",
+            "version": "12.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/helios-ag/FMElfinderBundle.git",
-                "reference": "0c35db5ae1d758baf6970765456f87aec3de347b"
+                "reference": "3ac75a36e3e780f95a8e7ddd298400bd7786e791"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/helios-ag/FMElfinderBundle/zipball/0c35db5ae1d758baf6970765456f87aec3de347b",
-                "reference": "0c35db5ae1d758baf6970765456f87aec3de347b",
+                "url": "https://api.github.com/repos/helios-ag/FMElfinderBundle/zipball/3ac75a36e3e780f95a8e7ddd298400bd7786e791",
+                "reference": "3ac75a36e3e780f95a8e7ddd298400bd7786e791",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": "^7.2 || ^8.0",
+                "php": "^7.4 || ^8.0",
                 "studio-42/elfinder": "~2.1",
-                "symfony/asset": "^4.4 || ^5.0 || ^5.2",
-                "symfony/flex": "1.*",
-                "symfony/form": "^4.4 || ^5.0 || ^5.2",
-                "symfony/framework-bundle": "^4.4 || ^5.0 || ^5.2",
-                "symfony/twig-bundle": "^4.4 || ^5.0 || ^5.2"
+                "symfony/asset": "^4.4 || ^5.0 || ^5.2 || ^6.0",
+                "symfony/form": "^4.4 || ^5.0 || ^5.2 || ^6.0",
+                "symfony/framework-bundle": "^4.4 || ^5.0 || ^5.2 || ^6.0",
+                "symfony/twig-bundle": "^4.4 || ^5.0 || ^5.2 || ^6.0"
             },
             "require-dev": {
                 "matthiasnoback/symfony-config-test": "^4.0",
                 "matthiasnoback/symfony-dependency-injection-test": "^4.1",
                 "php-coveralls/php-coveralls": "^2.0",
-                "phpunit/phpunit": "^8.5",
-                "symfony/finder": "^4.4 || ^5.0 || ^5.2",
-                "symfony/phpunit-bridge": "^4.1 || ^5.0 || ^5.2"
+                "symfony/finder": "^4.4 || ^5.0 || ^5.2 || ^6.0",
+                "symfony/phpunit-bridge": "^4.1 || ^5.0 || ^5.2 || ^6.0"
             },
             "suggest": {
                 "barryvdh/elfinder-flysystem-driver": "Flysystem driver for elfinder",
@@ -3802,7 +3800,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "10.0-dev"
+                    "dev-master": "12.0-dev"
                 }
             },
             "autoload": {
@@ -3833,9 +3831,15 @@
             ],
             "support": {
                 "issues": "https://github.com/helios-ag/FMElfinderBundle/issues",
-                "source": "https://github.com/helios-ag/FMElfinderBundle/tree/10.1"
+                "source": "https://github.com/helios-ag/FMElfinderBundle/tree/12.2.1"
             },
-            "time": "2021-01-29T14:07:45+00:00"
+            "funding": [
+                {
+                    "url": "https://paypal.me/heliosag",
+                    "type": "custom"
+                }
+            ],
+            "time": "2022-12-01T03:09:23+00:00"
         },
         {
             "name": "intervention/image",
@@ -5615,7 +5619,7 @@
             "dist": {
                 "type": "path",
                 "url": "app",
-                "reference": "3e7a938c18f6adbf4dec4f29e0f9be362c55f40a"
+                "reference": "26004657c93671bbcde058de2533b00e98e6b486"
             },
             "require": {
                 "aws/aws-sdk-php": "~3.0",
@@ -5640,7 +5644,7 @@
                 "geoip2/geoip2": "~2.0",
                 "guzzlehttp/guzzle": "^7.2",
                 "guzzlehttp/oauth-subscriber": "^0.6.0",
-                "helios-ag/fm-elfinder-bundle": "^10.1",
+                "helios-ag/fm-elfinder-bundle": "^12.2",
                 "ip2location/ip2location-php": "^7.2",
                 "jbroadway/urlify": "^1.0",
                 "jms/serializer-bundle": "^4.0",
@@ -10176,71 +10180,6 @@
                 }
             ],
             "time": "2022-04-14T15:36:10+00:00"
-        },
-        {
-            "name": "symfony/flex",
-            "version": "v1.18.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/flex.git",
-                "reference": "130851b90c1ea615ac5be6fce827971f4f55afbf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/130851b90c1ea615ac5be6fce827971f4f55afbf",
-                "reference": "130851b90c1ea615ac5be6fce827971f4f55afbf",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.0|^2.0",
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "composer/composer": "^1.0.2|^2.0",
-                "symfony/dotenv": "^4.4|^5.0|^6.0",
-                "symfony/filesystem": "^4.4|^5.0|^6.0",
-                "symfony/phpunit-bridge": "^4.4.12|^5.0|^6.0",
-                "symfony/process": "^4.4|^5.0|^6.0"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "Symfony\\Flex\\Flex"
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Flex\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien.potencier@gmail.com"
-                }
-            ],
-            "description": "Composer plugin for Symfony",
-            "support": {
-                "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v1.18.6"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-04-15T08:20:34+00:00"
         },
         {
             "name": "symfony/form",
