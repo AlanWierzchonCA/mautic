@@ -17,6 +17,10 @@ return [
                 'path'       => '/grapesjsbuilder/delete',
                 'controller' => 'GrapesJsBuilderBundle:FileManager:delete',
             ],
+            'grapesjsbuilder_assets' => [
+                'path'       => '/grapesjsbuilder/assets',
+                'controller' => 'GrapesJsBuilderBundle:FileManager:assets',
+            ],
             'grapesjsbuilder_builder' => [
                 'path'       => '/grapesjsbuilder/{objectType}/{objectId}',
                 'controller' => 'GrapesJsBuilderBundle:GrapesJs:builder',
@@ -100,7 +104,6 @@ return [
                 'arguments' => [
                     'grapesjsbuilder.config',
                     'grapesjsbuilder.model',
-                    'grapesjsbuilder.helper.filemanager',
                     'mautic.helper.templating',
                     'request_stack',
                     'router',
