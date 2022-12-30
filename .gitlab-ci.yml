@@ -53,8 +53,8 @@ install&build:
     - echo "StrictHostKeyChecking no" >> ~/.ssh/config
     - export SSHPASS=$PROD_REMOTE_USER_PASS
 
-    - echo "Download Plugins ..."
-    - sshpass -e scp -r $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR"plugins/*" ./plugins
+    - echo "Download Plugins ..."          
+    - while read file; do echo $file; sshpass -e scp -pr $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR"plugins/"$file ./plugins/$file; done < $PROD_REMOTE_RYSNC_PLUGINS    
 
     - echo "Download Translations ..."
     - sshpass -e scp -r $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR"translations/*" ./translations
