@@ -130,7 +130,8 @@ csfixer-test:
   script:
     - rm app/config/local.php
     - echo "Running Csfixer test ..."
-    - php composer.phar cs
+    - FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r 4402959f)
+    - php composer.phar cs $FILES_CHANGED
     # - php composer.phar fixcs
 
 deploy_to_webtest_server:
