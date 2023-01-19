@@ -22,7 +22,8 @@ class SentHelper extends AbstractHelper
      */
     public function generateStats(\DateTime $fromDateTime, \DateTime $toDateTime, EmailStatOptions $options, StatCollection $statCollection)
     {
-        $column = $this->generatedColumnsProvider->generatedColumnsAreSupported() ? 'generated_sent_date' : 'date_sent';
+        $useGeneratedColumn = $this->generatedColumnsProvider->generatedColumnsAreSupported() && $options->getUnit() == 'd';
+        $column = $useGeneratedColumn ? 'generated_sent_date' : 'date_sent';
         $query  = $this->getQuery($fromDateTime, $toDateTime);
         $q      = $query->prepareTimeDataQuery('email_stats', $column, $options->getFilters());
 
