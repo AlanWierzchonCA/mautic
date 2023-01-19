@@ -1996,17 +1996,12 @@ class LeadController extends FormController
             'withTotalCount' => true,
         ];
 
-        if (!$notAnonymize) {
-            $resultsCallback = function ($contact) {
-                return $contact->getAnonimizationProfileFields();
-            };
-        } else {
-            $resultsCallback = function ($contact) {
-                return $contact->getProfileFields();
-            };
-        }
+        /** @var \Mautic\CoreBundle\Helper\ExportHelper */
+        $exportHelper = $this->get('mautic.helper.export');
 
-        $iterator = new IteratorExportDataModel($model, $args, $resultsCallback);
+        $iterator = new IteratorExportDataModel($model, $args, function ($contact) use ($exportHelper, $notAnonymize) {
+            return $exportHelper->parseLeadToExport($contact, $notAnonymize);
+        });
 
         $response              = $this->exportResultsAs($iterator, $dataType, 'contacts');
         $args['total']         = $iterator->total;
