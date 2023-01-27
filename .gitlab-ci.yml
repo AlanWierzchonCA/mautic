@@ -26,7 +26,7 @@ before_script:
 install&build:
   stage: install
   environment:
-    name: installation
+    name: production
   services:
     - name: mariadb:10.5
       alias: marketing-db.krakow.comarch
@@ -88,9 +88,6 @@ install&build:
 
 unit-test:
   stage: test
-  when: manual
-  environment:
-    name: test
   services:
     - mysql
   variables:
@@ -106,42 +103,37 @@ unit-test:
     - cp $ENV_TEST .env
     - rm app/phpunit.xml.dist
     - cp $PHPUNIT_XML app/phpunit.xml.dist
-    - php composer.phar test
+    - php bin/phpunit -d memory_limit=1G --bootstrap vendor/autoload.php --configuration app/phpunit.xml.dist
 
 phpstan-test:
   stage: test
-  when: manual
-  environment:
-    name: test
+  when: manual  
   dependencies:
     - install&build
   script:
     - rm app/config/local.php
     - echo "Running PHPSTAN test ..."
-    - php composer.phar phpstan
+    - php -d memory_limit=4G bin/phpstan analyse
 
 csfixer-test:
   stage: test
-  when: manual
-  environment:
-    name: test
+  when: manual  
   dependencies:
     - install&build
   script:
     - rm app/config/local.php
     - echo "Running Csfixer test ..."
-    - php composer.phar cs
-    # - php composer.phar fixcs
+    - php bin/php-cs-fixer fix --config=.php-cs-fixer.php -v --dry-run --diff
 
 deploy_to_webtest_server:
   image: alpine:latest
   stage: deploy webtest
   rules:
-    - if: $GITLAB_USER_LOGIN =~ $ACCESS_USER_TO_DEPLOY && $CI_COMMIT_BRANCH =~ /^.*-ca\..*$/
+    - if: $GITLAB_USER_LOGIN =~ $ACCESS_USER_TO_DEPLOY && $CI_COMMIT_TAG =~ /^.*-ca\..*$/
       when: manual
     - when: never
   environment:
-    name: preproduction
+    name: staging
   before_script:
     - apk update && apk add openssh-client rsync sshpass
     - mkdir ~/.ssh
@@ -166,7 +158,7 @@ deploy_to_prod_server:
   environment:
     name: production
   rules:
-    - if: $GITLAB_USER_LOGIN =~ $ACCESS_USER_TO_DEPLOY && $CI_COMMIT_BRANCH =~ /^.*-ca\..*$/
+    - if: $GITLAB_USER_LOGIN =~ $ACCESS_USER_TO_DEPLOY && $CI_COMMIT_TAG =~ /^.*-ca\.[0-9]*$/
       when: manual
     - when: never
 
