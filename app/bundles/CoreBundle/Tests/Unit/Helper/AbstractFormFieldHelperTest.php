@@ -318,14 +318,14 @@ class AbstractFormFieldHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testAnonimizationFields()
     {
-        $fieldName1 = 'email';
-        $fieldName2 = 'country';
+        $fieldName1  = 'email';
+        $fieldName2  = 'country';
         $fieldValue1 = 'test@example.com';
         $fieldValue2 = 'Poland';
-        $email = 'test@example.com';
+        $email       = 'test@example.com';
         $anonimEmail = '*@example.com';
-        $expected1 = '*@example.com';
-        $expected2 = 'Poland';
+        $expected1   = '*@example.com';
+        $expected2   = 'Poland';
 
         $actual1 = AbstractFormFieldHelper::anonimizationFields($fieldName1, $fieldValue1, $email, $anonimEmail);
         $actual2 = AbstractFormFieldHelper::anonimizationFields($fieldName2, $fieldValue2, $email, $anonimEmail);
@@ -333,5 +333,4 @@ class AbstractFormFieldHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected1, $actual1);
         $this->assertEquals($expected2, $actual2);
     }
-
 }

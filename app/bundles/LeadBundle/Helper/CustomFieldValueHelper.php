@@ -134,5 +134,4 @@ class CustomFieldValueHelper
 
         return $fieldValues;
     }
-
 }

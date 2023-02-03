@@ -374,7 +374,7 @@ class ImportController extends FormController
                                     }
                                 }
                             } catch (FileException $e) {
-                                if (strpos($e->getMessage(), 'upload_max_file_row') !== false) {
+                                if (false !== strpos($e->getMessage(), 'upload_max_file_row')) {
                                     $errorMessage    = 'mautic.lead.import.filetoorow';
                                     $errorParameters = [
                                         '%import_row_count_limit%' => $this->getRowCountLimit(),

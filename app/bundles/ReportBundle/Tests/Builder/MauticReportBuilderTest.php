@@ -193,17 +193,17 @@ final class MauticReportBuilderTest extends TestCase
         $report->setAggregators([
             [
                 'column'    => 'a.bounced',
-                'function' => 'AVG',
+                'function'  => 'AVG',
             ],
         ]);
 
         $builder = $this->buildBuilder($report);
         $query   = $builder->getQuery([
             'columns' => [
-                'a.id' => [],
+                'a.id'      => [],
                 'a.bounced' => [
-                    'formula' => 'IF(dnc.id IS NOT NULL AND dnc.reason=2, 1, 0)'
-                ]
+                    'formula' => 'IF(dnc.id IS NOT NULL AND dnc.reason=2, 1, 0)',
+                ],
             ],
             'aggregators' => [
                 'a.bounced' => [

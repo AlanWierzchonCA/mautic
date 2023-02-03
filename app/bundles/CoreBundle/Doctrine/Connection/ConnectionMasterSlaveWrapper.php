@@ -10,7 +10,6 @@ class ConnectionMasterSlaveWrapper extends PrimaryReadReplicaConnection
 {
     /**
      * @param array<string, string> $dbParams
-     *
      */
     public function initConnection(array $dbParams): void
     {

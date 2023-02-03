@@ -122,7 +122,6 @@ phpstan-test:
 
 csfixer-test:
   stage: test
-  when: manual
   environment:
     name: test
   dependencies:

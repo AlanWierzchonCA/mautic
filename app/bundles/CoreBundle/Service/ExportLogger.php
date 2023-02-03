@@ -20,10 +20,7 @@ class ExportLogger
 
     protected $maxFiles;
 
-
     /**
-     * @param CoreParametersHelper $coreParametersHelper
-     *
      * @throws \Exception
      */
     public function __construct(CoreParametersHelper $coreParametersHelper)
@@ -66,7 +63,6 @@ class ExportLogger
     {
         return $this->maxFiles ?? 7;
     }
-
 
     public function loggerInfo(User $user, string $type, array $args)
     {

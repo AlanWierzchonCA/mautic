@@ -258,7 +258,6 @@ trait CustomFieldEntityTrait
         }
     }
 
-
     /**
      * Get anonimization profile values.
      *

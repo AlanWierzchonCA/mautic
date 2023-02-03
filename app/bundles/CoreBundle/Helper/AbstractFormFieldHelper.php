@@ -269,10 +269,6 @@ abstract class AbstractFormFieldHelper
     }
 
     /**
-     * @param string $fieldName
-     * @param string|null $fieldValue
-     * @param string|null $email
-     * @param string|null $anonimEmail
      * @return string
      */
     public static function anonimizationFields(string $fieldName, ?string $fieldValue, ?string $email, ?string $anonimEmail): ?string

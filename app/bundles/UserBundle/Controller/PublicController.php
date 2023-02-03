@@ -5,7 +5,6 @@ namespace Mautic\UserBundle\Controller;
 use Mautic\CoreBundle\Controller\FormController;
 use Mautic\UserBundle\Form\Type\PasswordResetConfirmType;
 use Mautic\UserBundle\Form\Type\PasswordResetType;
-use Symfony\Component\Form\FormError;
 
 class PublicController extends FormController
 {
@@ -76,6 +75,7 @@ class PublicController extends FormController
 
                 if (null == $user) {
                     $this->addFlash('mautic.user.user.notice.passwordreset.success');
+
                     return $this->redirect($this->generateUrl('login'));
                 } else {
                     if ($this->request->getSession()->has('resetToken')) {
