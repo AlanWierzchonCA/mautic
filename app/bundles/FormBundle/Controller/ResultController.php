@@ -281,7 +281,7 @@ class ResultController extends CommonFormController
             'RETURN_ARRAY'
         );
 
-        $notAnonymize = (bool)$permissions['lead:exports:notanonymize'];
+        $notAnonymize = (bool) $permissions['lead:exports:notanonymize'];
 
         $orderBy    = $session->get('mautic.formresult.'.$objectId.'.orderby', 's.date_submitted');
         $orderByDir = $session->get('mautic.formresult.'.$objectId.'.orderbydir', 'DESC');
