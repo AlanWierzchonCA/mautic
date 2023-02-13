@@ -20,7 +20,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SentHelperTest extends \PHPUnit\Framework\TestCase
 {
-
     private Collector $collector;
 
     private SentHelper $sentHelper;
@@ -52,22 +51,21 @@ class SentHelperTest extends \PHPUnit\Framework\TestCase
 
     private GeneratedColumns $generatedColumns;
 
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $eventDispatcher = new EventDispatcher();
-        $this->collector = new Collector($eventDispatcher);
-        $this->connection = $this->createMock(Connection::class);
+        $eventDispatcher                = new EventDispatcher();
+        $this->collector                = new Collector($eventDispatcher);
+        $this->connection               = $this->createMock(Connection::class);
         $this->generatedColumnsProvider = $this->createMock(GeneratedColumnsProviderInterface::class);
-        $this->userHelperMock = $this->createMock(UserHelper::class);
-        $this->queryBuilder = $this->createMock(QueryBuilder::class);
-        $this->statement = $this->createMock(Statement::class);
+        $this->userHelperMock           = $this->createMock(UserHelper::class);
+        $this->queryBuilder             = $this->createMock(QueryBuilder::class);
+        $this->statement                = $this->createMock(Statement::class);
 
         $this->connection->method('createQueryBuilder')->willReturn($this->queryBuilder);
 
-        $generatedColumn = new GeneratedColumn('email_stats', 'generated_sent_date', 'DATE', 'CONCAT(YEAR(date_sent), "-", LPAD(MONTH(date_sent), 2, "0"), "-", LPAD(DAY(date_sent), 2, "0"))');
+        $generatedColumn        = new GeneratedColumn('email_stats', 'generated_sent_date', 'DATE', 'CONCAT(YEAR(date_sent), "-", LPAD(MONTH(date_sent), 2, "0"), "-", LPAD(DAY(date_sent), 2, "0"))');
         $this->generatedColumns = new GeneratedColumns();
         $generatedColumn->addIndexColumn('email_id');
         $generatedColumn->setOriginalDateColumn('date_sent', 'd');
@@ -104,18 +102,18 @@ class SentHelperTest extends \PHPUnit\Framework\TestCase
             ->method('fetchAll')
             ->willReturn([
                 [
-                    'date' => '2022-12-12',
-                    'count' => '60'
+                    'date'  => '2022-12-12',
+                    'count' => '60',
                 ],
                 [
-                    'date' => '2022-12-16',
-                    'count' => '30'
-                ]
+                    'date'  => '2022-12-16',
+                    'count' => '30',
+                ],
             ]);
 
         $dateFrom = new \DateTime('2022-12-10 00:00:00');
-        $dateTo = new \DateTime('2022-12-20 00:00:00');
-        $options = new EmailStatOptions();
+        $dateTo   = new \DateTime('2022-12-20 00:00:00');
+        $options  = new EmailStatOptions();
         $options->setEmailIds([17]);
         $options->setUnit('d');
         $options->setCanViewOthers(true);
@@ -150,18 +148,18 @@ class SentHelperTest extends \PHPUnit\Framework\TestCase
             ->method('fetchAll')
             ->willReturn([
                 [
-                    'date' => '2022-12-10 13:00',
-                    'count' => '12'
+                    'date'  => '2022-12-10 13:00',
+                    'count' => '12',
                 ],
                 [
-                    'date' => '2022-12-10 14:00',
-                    'count' => '30'
-                ]
+                    'date'  => '2022-12-10 14:00',
+                    'count' => '30',
+                ],
             ]);
 
         $dateFrom = new \DateTime('2022-12-10 00:00:00');
-        $dateTo = new \DateTime('2022-12-11 00:00:00');
-        $options = new EmailStatOptions();
+        $dateTo   = new \DateTime('2022-12-11 00:00:00');
+        $options  = new EmailStatOptions();
         $options->setEmailIds([17]);
         $options->setUnit('H');
         $options->setCanViewOthers(true);
@@ -172,5 +170,4 @@ class SentHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(12, $hours['2022-12-10 13']->getCount());
         $this->assertEquals(30, $hours['2022-12-10 14']->getCount());
     }
-
 }
