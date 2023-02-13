@@ -108,8 +108,6 @@ unit-test:
 
 phpstan-test:
   stage: static analysis
-  dependencies:
-    - install&build
   script:
     - php composer.phar require phpstan/phpstan:1.6.3 --dev
     - bin/phpstan -V
