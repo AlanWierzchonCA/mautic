@@ -501,6 +501,7 @@ class SubmissionModel extends CommonFormModel
      * @param $format
      * @param $form
      * @param $queryArgs
+     * @param bool $notAnonymize
      *
      * @return StreamedResponse|Response
      *

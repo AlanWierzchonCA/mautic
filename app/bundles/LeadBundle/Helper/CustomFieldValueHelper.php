@@ -106,7 +106,7 @@ class CustomFieldValueHelper
     }
 
     /**
-     * @param $fields
+     * @param array $fields
      *
      * @return array
      */

@@ -325,7 +325,7 @@ class PublicController extends CommonFormController
     }
 
     /**
-     * @param $idHash
+     * @param string $idHash
      *
      * @return Response
      *
