@@ -138,6 +138,8 @@ deploy_to_webtest_server:
   dependencies:
     - install&build
   script:
+    - echo "Update Project Version"
+    - sed -i "s/^.*-ca\..*$/  \"version\": \"$CI_COMMIT_TAG\",/" app/release_metadata.json
     - echo "Try Rsync deploy to remote server ..."
     - echo $PREPROD_REMOTE_USER@$PREPROD_REMOTE_HOST:$PREPROD_REMOTE_HOST_DIR " ..."
     - sshpass -e rsync -avh -r --stats --delete --omit-dir-times --no-perms --files-from=$RSYNC_FILES --exclude-from=$RSYNC_FILES_EXCLUDE -e ssh . $PREPROD_REMOTE_USER@$PREPROD_REMOTE_HOST:$PREPROD_REMOTE_HOST_DIR
@@ -166,6 +168,8 @@ deploy_to_prod_server:
   dependencies:
     - install&build
   script:
+    - echo "Update Project Version"
+    - sed -i "s/^.*-ca\..*$/  \"version\": \"$CI_COMMIT_TAG\",/" app/release_metadata.json
     - echo "Try Rsync deploy to remote server ..."
     - echo $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR " ..."
     - sshpass -e rsync -avh -r --stats --delete --omit-dir-times --no-perms --files-from=$RSYNC_FILES --exclude-from=$RSYNC_FILES_EXCLUDE -e ssh . $PROD_REMOTE_USER@$PROD_REMOTE_HOST:$PROD_REMOTE_HOST_DIR
