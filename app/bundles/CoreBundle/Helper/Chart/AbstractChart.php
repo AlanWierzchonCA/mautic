@@ -72,7 +72,7 @@ abstract class AbstractChart
     public $colors = ['#4E5D9D', '#00B49C', '#FD9572', '#FDB933', '#757575', '#9C4E5C', '#694535', '#596935'];
 
     /**
-     * Get chart time unit
+     * Get chart time unit.
      *
      * @return string
      */

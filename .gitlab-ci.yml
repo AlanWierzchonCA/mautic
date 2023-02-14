@@ -115,12 +115,9 @@ phpstan-test:
     - php -d memory_limit=4G bin/phpstan analyse
 
 csfixer-test:
-  stage: test
-  when: manual  
-  dependencies:
-    - install&build
+  stage: static analysis
   script:
-    - rm app/config/local.php
+    - php composer.phar require friendsofphp/php-cs-fixer --dev
     - echo "Running Csfixer test ..."
     - php bin/php-cs-fixer fix --config=.php-cs-fixer.php -v --dry-run --diff
 
