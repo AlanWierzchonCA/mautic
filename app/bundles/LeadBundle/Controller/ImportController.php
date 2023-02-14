@@ -556,6 +556,9 @@ class ImportController extends FormController
         return $this->get('mautic.helper.core_parameters')->get('background_import_if_more_rows_than', 0);
     }
 
+    /**
+     * @return int
+     */
     protected function getRowCountLimit()
     {
         return $this->get('mautic.helper.core_parameters')->getParameter('import_row_count_limit', 0);

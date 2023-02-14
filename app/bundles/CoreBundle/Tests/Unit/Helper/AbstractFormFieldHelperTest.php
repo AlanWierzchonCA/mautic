@@ -316,7 +316,7 @@ class AbstractFormFieldHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testAnonimizationFields()
+    public function testAnonimizationFields(): void
     {
         $fieldName1  = 'email';
         $fieldName2  = 'country';

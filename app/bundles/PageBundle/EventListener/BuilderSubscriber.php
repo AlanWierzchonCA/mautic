@@ -632,9 +632,9 @@ class BuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @return string
+     * @param array $params array<int>
      */
-    protected function renderDoNotContact(array $params = [])
+    protected function renderDoNotContact(array $params = []): string
     {
         static $content = '';
 

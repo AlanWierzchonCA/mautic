@@ -2,6 +2,7 @@ image: ubuntu:20.04
 
 stages:
   - test ci
+  - static analysis
   - install
   - test
   - deploy webtest
@@ -106,12 +107,10 @@ unit-test:
     - php bin/phpunit -d memory_limit=1G --bootstrap vendor/autoload.php --configuration app/phpunit.xml.dist
 
 phpstan-test:
-  stage: test
-  when: manual  
-  dependencies:
-    - install&build
+  stage: static analysis
   script:
-    - rm app/config/local.php
+    - php composer.phar require phpstan/phpstan:1.6.3 --dev
+    - bin/phpstan -V
     - echo "Running PHPSTAN test ..."
     - php -d memory_limit=4G bin/phpstan analyse
 

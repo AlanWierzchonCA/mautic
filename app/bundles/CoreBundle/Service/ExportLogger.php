@@ -12,12 +12,24 @@ class ExportLogger
     const LEAD_EXPORT   = 'lead.exports';
     const REPORT_EXPORT = 'report.exports';
 
+    /**
+     * @var Logger
+     */
     protected $logger;
 
+    /**
+     * @var string|null
+     */
     protected $logPath;
 
+    /**
+     * @var string|null
+     */
     protected $logFileName;
 
+    /**
+     * @var int|null
+     */
     protected $maxFiles;
 
     /**
@@ -64,7 +76,7 @@ class ExportLogger
         return $this->maxFiles ?? 7;
     }
 
-    public function loggerInfo(User $user, string $type, array $args)
+    public function loggerInfo(User $user, string $type, array $args): void
     {
         $msg = 'User #'.$user->getId().'_'.crc32($user->getEmail()).' '.$type.' exported with params: ';
         $this->logger->info($msg, $args);
@@ -75,7 +87,7 @@ class ExportLogger
      *
      * @throws \Exception
      */
-    private function registerHandlers()
+    private function registerHandlers(): void
     {
         $this->logger->pushHandler(new RotatingFileHandler(
             $this->getLogPath().'/'.$this->getFileName(),
