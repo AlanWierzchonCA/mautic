@@ -79,6 +79,19 @@ return [
                     'request_stack',
                 ],
             ],
+            'mautic.focus.subscriber.lead' => [
+                'class'     => \MauticPlugin\MauticFocusBundle\EventListener\LeadSubscriber::class,
+                'arguments' => [
+                    'mautic.page.model.page',
+                    'mautic.page.model.video',
+                    'translator',
+                    'router',
+                    'mautic.focus.model.focus',
+                ],
+                'methodCalls' => [
+                    'setModelFactory' => ['mautic.model.factory'],
+                ],
+            ],
             'mautic.focus.stats.subscriber' => [
                 'class'     => \MauticPlugin\MauticFocusBundle\EventListener\StatsSubscriber::class,
                 'arguments' => [
