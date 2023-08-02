@@ -62,6 +62,7 @@ class BuilderSubscriber implements EventSubscriberInterface
     public const successmessage    = '{successmessage}';
 
     public const identifierToken   = '{leadidentifier}';
+    public const doNotContactToken = '{do_not_contact_text}';
 
     public function __construct(
         private CorePermissions $security,
@@ -140,6 +141,7 @@ class BuilderSubscriber implements EventSubscriberInterface
                         self::saveprefsRegex     => $this->translator->trans('mautic.page.form.saveprefs'),
                         self::successmessage     => $this->translator->trans('mautic.page.form.successmessage'),
                         self::identifierToken    => $this->translator->trans('mautic.page.form.leadidentifier'),
+                        self::doNotContactToken  => $this->translator->trans('mautic.page.form.donotcontact'),
                     ]
                 )
             );
@@ -419,6 +421,12 @@ class BuilderSubscriber implements EventSubscriberInterface
                 $savePrefs = $this->renderSavePrefs($params);
                 $content   = str_ireplace(self::saveprefsRegex, $savePrefs.($params['custom_tag'] ?? ''), $content);
             }
+
+            if (false !== strpos($content, self::doNotContactToken)) {
+                $doNotContact = $this->renderDoNotContact($params);
+                $content      = str_ireplace(self::doNotContactToken, $doNotContact, $content);
+            }
+
             // add form before first block of prefs center
             if (isset($params['startform']) && str_contains($content, 'data-prefs-center')) {
                 $dom = new \DOMDocument('1.0', 'utf-8');
@@ -586,6 +594,24 @@ class BuilderSubscriber implements EventSubscriberInterface
         if (empty($content)) {
             $content = "<div class='pref-saveprefs ' ".$this->getAttributeForFirtSlot().">\n";
             $content .= $this->twig->render('@MauticCore/Slots/saveprefsbutton.html.twig', $params);
+            $content .= "</div>\n";
+        }
+
+        return $content;
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return string
+     */
+    protected function renderDoNotContact(array $params = [])
+    {
+        static $content = '';
+
+        if (empty($content)) {
+            $content = "<div class='pref-donotcontact ' ".$this->getAttributeForFirtSlot().">\n";
+            $content .= $this->twig->render('@MauticCore/Slots/donotcontact.html.twig', $params);
             $content .= "</div>\n";
         }
 

@@ -63,6 +63,10 @@ return [
                 'path'       => '/email/unsubscribe/{idHash}',
                 'controller' => 'Mautic\EmailBundle\Controller\PublicController::unsubscribeAction',
             ],
+            'mautic_email_dnc' => [
+                'path'       => '/email/dnc/{idHash}',
+                'controller' => 'MauticEmailBundle:Public:doNotContact',
+            ],
             'mautic_email_resubscribe' => [
                 'path'       => '/email/resubscribe/{idHash}',
                 'controller' => 'Mautic\EmailBundle\Controller\PublicController::resubscribeAction',
@@ -366,6 +370,7 @@ return [
         'show_contact_preferred_channels'                                   => false,
         'show_contact_categories'                                           => false,
         'show_contact_segments'                                             => false,
+        'show_contact_dnc'                                                  => false,
         'disable_trackable_urls'                                            => false,
         'theme_email_default'                                               => 'blank',
         'mailer_memory_msg_limit'                                           => 100,

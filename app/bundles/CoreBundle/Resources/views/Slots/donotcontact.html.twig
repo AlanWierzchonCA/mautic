@@ -1,0 +1,7 @@
+{% if form is defined %}
+    {% if doNotContactText %}
+        {{ doNotContactText }}
+    {% endif %}
+{% else %}
+    {{ 'mautic.email.do_not_contact.text' | trans }}
+{% endif %}

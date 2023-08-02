@@ -102,6 +102,7 @@
     <div class="panel-body">
         <div class="row">
             {{ _self.row_if_exists(fields, 'unsubscribe_text') }}
+            {{ _self.row_if_exists(fields, 'do_not_contact_text') }}
         </div>
         <div class="row">
             {{ _self.row_if_exists(fields, 'unsubscribe_message') }}
@@ -118,6 +119,9 @@
         <div class="row">
             {{ _self.row_if_exists(fields, 'show_contact_categories') }}
             {{ _self.row_if_exists(fields, 'show_contact_preferred_channels') }}
+        </div>
+        <div class="row">
+            {{ _self.row_if_exists(fields, 'show_contact_dnc') }}
         </div>
     </div>
 </div>
