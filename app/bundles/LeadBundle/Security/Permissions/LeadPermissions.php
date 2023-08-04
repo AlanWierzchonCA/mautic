@@ -24,6 +24,10 @@ class LeadPermissions extends AbstractPermissions
                 'full' => 1024,
                 'view' => 1,
             ],
+            'exports' => [
+                'full'         => 1024,
+                'notAnonymize' => 2,
+            ],
         ];
         $this->addExtendedPermissions('leads', false);
         $this->addStandardPermissions('imports');
@@ -67,6 +71,21 @@ class LeadPermissions extends AbstractPermissions
                 'data'              => (!empty($data['fields']) ? $data['fields'] : []),
                 'bundle'            => 'lead',
                 'level'             => 'fields',
+            ]
+        );
+
+        $builder->add(
+            'lead:exports',
+            PermissionListType::class,
+            [
+                'choices' => [
+                    'mautic.core.permissions.full'         => 'full',
+                    'mautic.core.permissions.notAnonymize' => 'notAnonymize',
+                ],
+                'label'             => 'mautic.lead.permissions.exports',
+                'data'              => (!empty($data['exports']) ? $data['exports'] : []),
+                'bundle'            => 'lead',
+                'level'             => 'exports',
             ]
         );
 
