@@ -9,6 +9,7 @@ use Mautic\CoreBundle\Helper\EmojiHelper;
 use Mautic\CoreBundle\Helper\ExportHelper;
 use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\CoreBundle\Model\IteratorExportDataModel;
+use Mautic\CoreBundle\Service\ExportLogger;
 use Mautic\EmailBundle\Helper\MailHelper;
 use Mautic\LeadBundle\DataObject\LeadManipulator;
 use Mautic\LeadBundle\Deduplicate\ContactMerger;
@@ -2007,7 +2008,14 @@ class LeadController extends FormController
 
         $iterator = new IteratorExportDataModel($model, $args, fn ($contact) => $exportHelper->parseLeadToExport($contact, $notAnonymize));
 
-        return $this->exportResultsAs($iterator, $fileType, 'contacts', $exportHelper);
+        $response              = $this->exportResultsAs($iterator, $fileType, 'contacts', $exportHelper);
+        $args['total']         = $iterator->total;
+        $args['dataType']      = $fileType;
+        $args['anonimization'] = $notAnonymize ? false : true;
+        $logger                = new ExportLogger($this->coreParametersHelper);
+        $logger->loggerInfo($this->getUser(), ExportLogger::LEAD_EXPORT, $args);
+
+        return $response;
     }
 
     /**
@@ -2040,7 +2048,14 @@ class LeadController extends FormController
             return $this->notFound();
         }
 
-        $contactFields = $notAnonymize ? $lead->getProfileFields() : $lead->getAnonymizationProfileFields();
+        $contactFields = $notAnonymize ? $lead->getProfileFields() : $lead->getAnonimizationProfileFields();
+        $args[]        = [
+            'lead'          => $contactId,
+            'anonimization' => $notAnonymize ? false : true,
+            'dataType'      => $dataType,
+        ];
+        $logger = new ExportLogger($this->coreParametersHelper);
+        $logger->loggerInfo($this->getUser(), ExportLogger::LEAD_EXPORT, $args);
         $export        = [];
         foreach ($contactFields as $alias => $contactField) {
             $export[] = [

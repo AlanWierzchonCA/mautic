@@ -7,6 +7,7 @@ use Mautic\CoreBundle\Factory\PageHelperFactoryInterface;
 use Mautic\CoreBundle\Form\Type\DateRangeType;
 use Mautic\CoreBundle\Helper\DateTimeHelper;
 use Mautic\CoreBundle\Helper\InputHelper;
+use Mautic\CoreBundle\Service\ExportLogger;
 use Mautic\ReportBundle\Crate\ReportDataResult;
 use Mautic\ReportBundle\Entity\Report;
 use Mautic\ReportBundle\Form\Type\DynamicFiltersType;
@@ -782,6 +783,7 @@ class ReportController extends FormController
                     $handle                     = fopen('php://output', 'r+');
                     $batchTotals                = [];
                     $batchDataSize              = 0;
+
                     do {
                         $reportData = $model->getReportData($entity, null, $options);
 
@@ -801,7 +803,7 @@ class ReportController extends FormController
                         // Note this so that it's not recalculated on each batch
                         $options['totalResults'] = $reportData['totalResults'];
 
-                        $model->exportResults($format, $entity, $reportDataResult, $handle, $options['page']);
+                        $model->exportResults($format, $entity, $reportData, $handle, $options['page']);
                         ++$options['page'];
                     } while (!empty($reportData['data']));
 
@@ -818,6 +820,13 @@ class ReportController extends FormController
             $reportDataResult = new ReportDataResult($reportData);
             $response         = $model->exportResults($format, $entity, $reportDataResult);
         }
+
+        $args['id']         = $objectId;
+        $args['options']    = $options;
+        $args['dataType']   = $format;
+
+        $logger = new ExportLogger($this->coreParametersHelper);
+        $logger->loggerInfo($this->getUser(), ExportLogger::REPORT_EXPORT, $args);
 
         return $response;
     }

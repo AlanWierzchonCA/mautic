@@ -10,7 +10,7 @@ class IteratorExportDataModel implements \Iterator
 
     private $callback;
 
-    private int $total;
+    public int $total;
 
     private $data;
 

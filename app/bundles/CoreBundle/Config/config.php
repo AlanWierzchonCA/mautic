@@ -162,6 +162,12 @@ return [
                     '%env(resolve:MAUTIC_EL_FINDER_PATH)%',
                 ],
             ],
+            'mautic.lead.exports.logger' => [
+                'class'     => \Mautic\CoreBundle\Service\ExportLogger::class,
+                'arguments' => [
+                    'mautic.helper.core_parameters',
+                ],
+            ],
             'mautic.core.service.log_processor' => [
                 'class'     => \Mautic\CoreBundle\Monolog\LogProcessor::class,
                 'tags'      => ['monolog.processor'],
