@@ -25,6 +25,17 @@ class AuditlogController extends CommonController
             return $lead;
         }
 
+        $permissions = $this->security->isGranted(
+            [
+                'lead:exports:create',
+            ],
+            'RETURN_ARRAY'
+        );
+
+        if (!$permissions['lead:exports:create']) {
+            return $this->accessDenied();
+        }
+
         $this->setListFilters();
 
         $session = $request->getSession();

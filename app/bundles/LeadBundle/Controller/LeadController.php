@@ -73,6 +73,7 @@ class LeadController extends FormController
                 'lead:leads:deleteother',
                 'lead:imports:view',
                 'lead:imports:create',
+                'lead:exports:create',
             ],
             'RETURN_ARRAY'
         );
@@ -1944,12 +1945,13 @@ class LeadController extends FormController
                 'lead:leads:editother',
                 'lead:leads:deleteown',
                 'lead:leads:deleteother',
+                'lead:exports:create',
                 'lead:exports:notAnonymize',
             ],
             'RETURN_ARRAY'
         );
 
-        if (!$permissions['lead:leads:viewown'] && !$permissions['lead:leads:viewother']) {
+        if (!$permissions['lead:leads:viewown'] && !$permissions['lead:leads:viewother'] || !$permissions['lead:exports:create']) {
             return $this->accessDenied();
         }
 
@@ -2028,12 +2030,13 @@ class LeadController extends FormController
             [
                 'lead:leads:viewown',
                 'lead:leads:viewother',
+                'lead:exports:create',
                 'lead:exports:notAnonymize',
             ],
             'RETURN_ARRAY'
         );
 
-        if (!$permissions['lead:leads:viewown'] && !$permissions['lead:leads:viewother']) {
+        if (!$permissions['lead:leads:viewown'] && !$permissions['lead:leads:viewother'] || !$permissions['lead:exports:create']) {
             return $this->accessDenied();
         }
 
