@@ -1,72 +1,69 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mautic\CoreBundle\Service;
 
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\UserBundle\Entity\User;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ExportLogger
 {
     public const LEAD_EXPORT   = 'lead.exports';
     public const REPORT_EXPORT = 'report.exports';
 
-    protected $logger;
+    protected Logger $logger;
 
-    protected $logPath;
+    protected string $logPath;
 
-    protected $logFileName;
+    protected string $logFileName;
 
-    protected $maxFiles;
+    protected int $maxFiles;
 
     /**
      * @throws \Exception
      */
     public function __construct(CoreParametersHelper $coreParametersHelper)
     {
-        $this->logPath     = $coreParametersHelper->get('log_exports_path');
-        $this->logFileName = $coreParametersHelper->get('log_file_exports_name');
-        $this->maxFiles    = $coreParametersHelper->get('max_log_exports_files');
+        $this->logPath     = (string) $coreParametersHelper->get('log_exports_path');
+        $this->logFileName = (string) $coreParametersHelper->get('log_file_exports_name');
+        $this->maxFiles    = (int) $coreParametersHelper->get('max_log_exports_files');
         $this->logger      = new Logger($this->getLoggerName());
         $this->registerHandlers();
     }
 
-    /**
-     * @return string
-     */
-    public function getLoggerName()
+    public function getLoggerName(): string
     {
         return 'logger_exports';
     }
 
-    /**
-     * @return array|false|mixed|string
-     */
-    public function getFileName()
+    public function getFileName(): string
     {
         return $this->logFileName ?? 'exports_prod.php';
     }
 
-    /**
-     * @return array|false|mixed|string
-     */
-    public function getLogPath()
+    public function getLogPath(): string
     {
-        return $this->logPath ?? '%kernel.root_dir%/../var/logs/exports';
+        return $this->logPath ?? '%kernel.root_dir%/var/logs/exports';
     }
 
-    /**
-     * @return array|false|int|mixed|string
-     */
-    public function getMaxFiles()
+    public function getMaxFiles(): int
     {
         return $this->maxFiles ?? 7;
     }
 
-    public function loggerInfo(User $user, string $type, array $args)
+    /**
+     * @param array<mixed> $args
+     */
+    public function loggerInfo(?UserInterface $user, string $type, array $args): void
     {
-        $msg = 'User #'.$user->getId().'_'.crc32($user->getEmail()).' '.$type.' exported with params: ';
+        $msg = ($user instanceof User) ?
+            'User #'.$user->getId().'_'.crc32($user->getEmail()).' '.$type.' exported with params: '
+            : 'User #'.$user->getUserIdentifier().' '.$type.' exported with params: ';
+
         $this->logger->info($msg, $args);
     }
 
@@ -75,7 +72,7 @@ class ExportLogger
      *
      * @throws \Exception
      */
-    private function registerHandlers()
+    private function registerHandlers(): void
     {
         $this->logger->pushHandler(new RotatingFileHandler(
             $this->getLogPath().'/'.$this->getFileName(),

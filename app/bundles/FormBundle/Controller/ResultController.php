@@ -302,15 +302,13 @@ class ResultController extends CommonFormController
         } elseif (!$this->security->hasEntityAccess(
             'form:forms:viewown',
             'form:forms:viewother',
-            'lead:exports:notanonymize',
-            'lead:exports:create',
             $form->getCreatedBy()
         )
         ) {
             return $this->accessDenied();
         }
 
-        $permissions = $this->get('mautic.security')->isGranted(
+        $permissions = $this->security->isGranted(
             [
                 'lead:exports:notanonymize',
             ],

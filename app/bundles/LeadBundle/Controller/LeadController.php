@@ -2051,7 +2051,7 @@ class LeadController extends FormController
             return $this->notFound();
         }
 
-        $contactFields = $notAnonymize ? $lead->getProfileFields() : $lead->getAnonimizationProfileFields();
+        $contactFields = $notAnonymize ? $lead->getProfileFields() : $lead->getAnonymizationProfileFields();
         $args[]        = [
             'lead'          => $contactId,
             'anonimization' => $notAnonymize ? false : true,

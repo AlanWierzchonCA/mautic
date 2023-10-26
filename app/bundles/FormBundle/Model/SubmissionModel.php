@@ -416,7 +416,7 @@ class SubmissionModel extends CommonFormModel
      *
      * @throws \Exception
      */
-    public function exportResults($format, $form, $queryArgs, $notAnonymize = false)
+    public function exportResults($format, $form, $queryArgs, bool $notAnonymize = false)
     {
         $viewOnlyFields              = $this->formModel->getCustomComponents()['viewOnlyFields'];
         $queryArgs['viewOnlyFields'] = $viewOnlyFields;
