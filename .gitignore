@@ -11,6 +11,10 @@
 !.gitpod.Dockerfile
 !.gitpod.yml
 !.ddev/commands/web/dd
+.ddev/commands/rabbitmq
+.ddev/rabbitmq
+.ddev/docker-compose.rabbitmq.yaml
+.ddev/rabbitmq-build/enabled_plugins
 .php_cs.cache
 /.env.local
 /.env.local.php
