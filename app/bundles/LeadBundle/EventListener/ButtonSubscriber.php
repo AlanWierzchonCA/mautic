@@ -49,19 +49,19 @@ class ButtonSubscriber implements EventSubscriberInterface
             $event->addButton(
                 [
                     'attr' => [
-                        'data-toggle' => 'confirmation',
-                        'href' => $exportRoute . '?filetype=xlsx',
+                        'data-toggle'   => 'confirmation',
+                        'href'          => $exportRoute.'?filetype=xlsx',
                         'data-precheck' => 'batchActionPrecheck',
-                        'data-message' => $this->translator->trans(
+                        'data-message'  => $this->translator->trans(
                             'mautic.core.export.items',
                             ['%items%' => 'contacts']
                         ),
-                        'data-confirm-text' => $this->translator->trans('mautic.core.export.xlsx'),
+                        'data-confirm-text'     => $this->translator->trans('mautic.core.export.xlsx'),
                         'data-confirm-callback' => 'executeBatchAction',
-                        'data-cancel-text' => $this->translator->trans('mautic.core.form.cancel'),
-                        'data-cancel-callback' => 'dismissConfirmation',
+                        'data-cancel-text'      => $this->translator->trans('mautic.core.form.cancel'),
+                        'data-cancel-callback'  => 'dismissConfirmation',
                     ],
-                    'btnText' => $this->translator->trans('mautic.core.export.xlsx'),
+                    'btnText'   => $this->translator->trans('mautic.core.export.xlsx'),
                     'iconClass' => 'fa fa-file-excel-o',
                 ],
                 ButtonHelper::LOCATION_BULK_ACTIONS
@@ -70,19 +70,19 @@ class ButtonSubscriber implements EventSubscriberInterface
             $event->addButton(
                 [
                     'attr' => [
-                        'data-toggle' => 'confirmation',
-                        'href' => $exportRoute . '?filetype=csv',
+                        'data-toggle'   => 'confirmation',
+                        'href'          => $exportRoute.'?filetype=csv',
                         'data-precheck' => 'batchActionPrecheck',
-                        'data-message' => $this->translator->trans(
+                        'data-message'  => $this->translator->trans(
                             'mautic.core.export.items',
                             ['%items%' => 'contacts']
                         ),
-                        'data-confirm-text' => $this->translator->trans('mautic.core.export.csv'),
+                        'data-confirm-text'     => $this->translator->trans('mautic.core.export.csv'),
                         'data-confirm-callback' => 'executeBatchAction',
-                        'data-cancel-text' => $this->translator->trans('mautic.core.form.cancel'),
-                        'data-cancel-callback' => 'dismissConfirmation',
+                        'data-cancel-text'      => $this->translator->trans('mautic.core.form.cancel'),
+                        'data-cancel-callback'  => 'dismissConfirmation',
                     ],
-                    'btnText' => $this->translator->trans('mautic.core.export.csv'),
+                    'btnText'   => $this->translator->trans('mautic.core.export.csv'),
                     'iconClass' => 'fa fa-file-text-o',
                 ],
                 ButtonHelper::LOCATION_BULK_ACTIONS
@@ -91,10 +91,10 @@ class ButtonSubscriber implements EventSubscriberInterface
             $event->addButton(
                 [
                     'attr' => [
-                        'href' => $exportRoute . '?filetype=xlsx',
+                        'href'        => $exportRoute.'?filetype=xlsx',
                         'data-toggle' => null,
                     ],
-                    'btnText' => $this->translator->trans('mautic.core.export.xlsx'),
+                    'btnText'   => $this->translator->trans('mautic.core.export.xlsx'),
                     'iconClass' => 'fa fa-file-excel-o',
                 ],
                 ButtonHelper::LOCATION_PAGE_ACTIONS
@@ -103,15 +103,14 @@ class ButtonSubscriber implements EventSubscriberInterface
             $event->addButton(
                 [
                     'attr' => [
-                        'href' => $exportRoute . '?filetype=csv',
+                        'href'        => $exportRoute.'?filetype=csv',
                         'data-toggle' => null,
                     ],
-                    'btnText' => $this->translator->trans('mautic.core.export.csv'),
+                    'btnText'   => $this->translator->trans('mautic.core.export.csv'),
                     'iconClass' => 'fa fa-file-text-o',
                 ],
                 ButtonHelper::LOCATION_PAGE_ACTIONS
             );
-
         }
     }
 }
