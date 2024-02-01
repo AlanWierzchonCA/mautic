@@ -1,0 +1,5 @@
+include:
+  - project: ${PROJ_MAUTIC_TEMPLATE_PATH}marketing-automation/tools/mautic-deploy
+    ref: ${PROJ_MAUTIC_TEMPLATE_REF}
+    file:
+      - gitlab-ci-templates/mautic-gitlab-ci.yml
